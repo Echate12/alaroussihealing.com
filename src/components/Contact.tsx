@@ -1,7 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 
 const Contact = () => {
+  const [form, setForm] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    type: '',
+    message: ''
+  });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      const res = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      if (res.ok) {
+        setStatus('success');
+        setForm({ name: '', phone: '', email: '', type: '', message: '' });
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
+
   const contactInfo = [
     {
       icon: Phone,
@@ -104,7 +137,7 @@ const Contact = () => {
               أرسل رسالة
             </h3>
             
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-islamic-green-800 font-semibold mb-2">
@@ -112,8 +145,12 @@ const Contact = () => {
                   </label>
                   <input
                     type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-islamic-green-500 focus:ring-2 focus:ring-islamic-green-200 transition-all duration-200"
                     placeholder="اسمك الكامل"
+                    required
                   />
                 </div>
                 <div>
@@ -122,8 +159,12 @@ const Contact = () => {
                   </label>
                   <input
                     type="tel"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-islamic-green-500 focus:ring-2 focus:ring-islamic-green-200 transition-all duration-200"
                     placeholder="رقم هاتفك"
+                    required
                   />
                 </div>
               </div>
@@ -134,8 +175,12 @@ const Contact = () => {
                 </label>
                 <input
                   type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-islamic-green-500 focus:ring-2 focus:ring-islamic-green-200 transition-all duration-200"
                   placeholder="بريدك الإلكتروني"
+                  required
                 />
               </div>
               
@@ -143,13 +188,19 @@ const Contact = () => {
                 <label className="block text-islamic-green-800 font-semibold mb-2">
                   نوع الاستشارة
                 </label>
-                <select className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-islamic-green-500 focus:ring-2 focus:ring-islamic-green-200 transition-all duration-200">
-                  <option>اختر نوع الاستشارة</option>
-                  <option>رقية شرعية عامة</option>
-                  <option>علاج من العين والحسد</option>
-                  <option>علاج من السحر</option>
-                  <option>علاج نفسي وروحي</option>
-                  <option>استشارة أخرى</option>
+                <select
+                  name="type"
+                  value={form.type}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-islamic-green-500 focus:ring-2 focus:ring-islamic-green-200 transition-all duration-200"
+                  required
+                >
+                  <option value="">اختر نوع الاستشارة</option>
+                  <option value="رقية شرعية عامة">رقية شرعية عامة</option>
+                  <option value="علاج من العين والحسد">علاج من العين والحسد</option>
+                  <option value="علاج من السحر">علاج من السحر</option>
+                  <option value="علاج نفسي وروحي">علاج نفسي وروحي</option>
+                  <option value="استشارة أخرى">استشارة أخرى</option>
                 </select>
               </div>
               
@@ -158,20 +209,31 @@ const Contact = () => {
                   تفاصيل الرسالة
                 </label>
                 <textarea
+                  name="message"
                   rows={5}
+                  value={form.message}
+                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-islamic-green-500 focus:ring-2 focus:ring-islamic-green-200 transition-all duration-200"
                   placeholder="اكتب تفاصيل حالتك أو استفسارك هنا..."
+                  required
                 ></textarea>
               </div>
               
               <button
                 type="submit"
                 className="w-full bg-gradient-islamic text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center space-x-2 space-x-reverse"
+                disabled={status === 'sending'}
               >
                 <Send className="w-5 h-5" />
-                <span>إرسال الرسالة</span>
+                <span>{status === 'sending' ? 'جاري الإرسال...' : 'إرسال الرسالة'}</span>
               </button>
             </form>
+            {status === 'success' && (
+              <div className="text-green-600 text-center font-bold mt-4">تم إرسال الرسالة بنجاح!</div>
+            )}
+            {status === 'error' && (
+              <div className="text-red-600 text-center font-bold mt-4">حدث خطأ أثناء الإرسال. حاول مرة أخرى.</div>
+            )}
           </div>
         </div>
       </div>
