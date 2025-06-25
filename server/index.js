@@ -1,14 +1,16 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
 import cors from 'cors';
-import dotenv from 'dotenv'; // ✅ Load environment variables
+import dotenv from 'dotenv';
 
-dotenv.config(); // ✅ Call it before using process.env
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// ✅ Allow CORS requests from any domain (for testing)
+app.use(cors({ origin: '*' }));
+
 app.use(express.json());
 
 // POST /api/contact
@@ -19,7 +21,7 @@ app.post('/api/contact', async (req, res) => {
     return res.status(400).json({ error: 'All fields are required.' });
   }
 
-  // Configure transporter
+  // Configure the transporter
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -45,7 +47,7 @@ app.post('/api/contact', async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: 'Email sent successfully.' });
   } catch (error) {
-    console.error('❌ Email sending error:', error); // ✅ Helpful log
+    console.error('❌ Email sending error:', error);
     res.status(500).json({ error: 'Failed to send email.' });
   }
 });
