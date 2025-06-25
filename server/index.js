@@ -1,52 +1,25 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'; // ✅ Load environment variables
 
-dotenv.config();
+dotenv.config(); // ✅ Call it before using process.env
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Configure CORS with specific allowed origins
-const allowedOrigins = [
-  'https://alaroussihealingcom-production.up.railway.app',
-  'http://localhost:3000'
-];
-
-// Enhanced CORS middleware
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  next();
-});
-
-// Explicit OPTIONS handler for preflight requests
-app.options('*', (req, res) => {
-  res.sendStatus(200);
-});
-
+app.use(cors());
 app.use(express.json());
 
-// POST /api/contact with CORS headers
+// POST /api/contact
 app.post('/api/contact', async (req, res) => {
-  // Set CORS headers for the actual response
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
   const { name, phone, email, type, message } = req.body;
 
   if (!name || !phone || !email || !type || !message) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
 
+  // Configure transporter
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -72,12 +45,11 @@ app.post('/api/contact', async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: 'Email sent successfully.' });
   } catch (error) {
-    console.error('Email sending error:', error);
+    console.error('❌ Email sending error:', error); // ✅ Helpful log
     res.status(500).json({ error: 'Failed to send email.' });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log('Allowed origins:', allowedOrigins);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
