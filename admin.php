@@ -3,13 +3,23 @@
 $submissions = [];
 $log_file = __DIR__ . '/contact_submissions.txt';
 
-if (file_exists($log_file)) {
-    $lines = file($log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        $submissions[] = json_decode($line, true);
+try {
+    if (file_exists($log_file) && is_readable($log_file)) {
+        $lines = file($log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if ($lines !== false) {
+            foreach ($lines as $line) {
+                $decoded = json_decode($line, true);
+                if ($decoded !== null) {
+                    $submissions[] = $decoded;
+                }
+            }
+            // Reverse to show newest first
+            $submissions = array_reverse($submissions);
+        }
     }
-    // Reverse to show newest first
-    $submissions = array_reverse($submissions);
+} catch (Exception $e) {
+    // Silently handle errors
+    $submissions = [];
 }
 ?>
 <!DOCTYPE html>

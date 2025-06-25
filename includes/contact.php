@@ -18,23 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'البريد الإلكتروني غير صحيح';
         $messageType = 'error';
     } else {
-        // Save to file for backup (with error handling)
-        $contact_data = [
-            'timestamp' => date('Y-m-d H:i:s'),
-            'name' => $name,
-            'phone' => $phone,
-            'email' => $email,
-            'type' => $type,
-            'message' => $message_text,
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-        ];
-        
-        $log_file = __DIR__ . '/../contact_submissions.txt';
-        $log_entry = json_encode($contact_data, JSON_UNESCAPED_UNICODE) . "\n";
-        
-        // Try to save to file (optional - won't break if it fails)
-        @file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
-        
         // Create WhatsApp message
         $whatsapp_message = "رسالة جديدة من موقع العروسي للرقية:\n\n";
         $whatsapp_message .= "الاسم: " . $name . "\n";
@@ -56,6 +39,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Clear form data
         $name = $phone = $email = $type = $message_text = '';
+        
+        // Try to save to file for backup (optional - won't break if it fails)
+        try {
+            $contact_data = [
+                'timestamp' => date('Y-m-d H:i:s'),
+                'name' => $name,
+                'phone' => $phone,
+                'email' => $email,
+                'type' => $type,
+                'message' => $message_text,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ];
+            
+            $log_file = __DIR__ . '/../contact_submissions.txt';
+            $log_entry = json_encode($contact_data, JSON_UNESCAPED_UNICODE) . "\n";
+            
+            // Use error suppression to prevent breaking the form
+            @file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
+        } catch (Exception $e) {
+            // Silently fail - don't break the form if file writing fails
+        }
         
         // Redirect to WhatsApp after a short delay
         echo "<script>
