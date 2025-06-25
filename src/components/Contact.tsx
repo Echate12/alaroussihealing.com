@@ -115,14 +115,14 @@ const Contact = () => {
             {/* Quick Action Buttons */}
             <div className="mt-8 space-y-4">
               <a
-                href="tel:+966501234567"
+                href="tel:+212 666462665"
                 className="flex items-center justify-center space-x-3 space-x-reverse bg-gradient-islamic text-white px-6 py-4 rounded-2xl hover:shadow-lg transition-all duration-300 w-full"
               >
                 <Phone className="w-5 h-5" />
                 <span className="font-semibold">اتصل الآن</span>
               </a>
               <a
-                href="https://wa.me/966501234567"
+                href="https://wa.me/212666462665"
                 className="flex items-center justify-center space-x-3 space-x-reverse bg-green-600 text-white px-6 py-4 rounded-2xl hover:shadow-lg transition-all duration-300 w-full"
               >
                 <MessageCircle className="w-5 h-5" />
@@ -155,7 +155,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <label className="block text-islamic-green-800 font-semibold mb-2">
-                    رقم الهاتف
+                    رقم الهاتفs
                   </label>
                   <input
                     type="tel"
