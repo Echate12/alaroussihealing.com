@@ -39,13 +39,13 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'اتصل بنا',
-      details: ['+966 50 123 4567', '+966 11 987 6543'],
+      details: ['+212 666462665'],
       color: 'islamic-green'
     },
     {
       icon: Mail,
       title: 'البريد الإلكتروني',
-      details: ['info@alaroussihealing.com', 'booking@alaroussihealing.com'],
+      details: ['echmohamed2000@gmail.com', 'booking@alaroussihealing.com'],
       color: 'islamic-gold'
     },
     {
