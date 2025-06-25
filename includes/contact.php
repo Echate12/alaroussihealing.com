@@ -2,6 +2,7 @@
 // Handle form submission
 $message = '';
 $messageType = '';
+$whatsapp_url = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
@@ -30,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Encode message for URL
         $encoded_message = urlencode($whatsapp_message);
         
-        // Redirect to WhatsApp
+        // Create WhatsApp URL
         $whatsapp_url = "https://wa.me/212666462665?text=" . $encoded_message;
         
-        // Set success message and redirect
-        $message = 'تم إرسال الرسالة بنجاح! سيتم فتح واتساب...';
+        // Set success message
+        $message = 'تم إرسال الرسالة بنجاح! انقر على الرابط أدناه لفتح واتساب';
         $messageType = 'success';
         
         // Clear form data
@@ -60,13 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             // Silently fail - don't break the form if file writing fails
         }
-        
-        // Redirect to WhatsApp after a short delay
-        echo "<script>
-            setTimeout(function() {
-                window.open('$whatsapp_url', '_blank');
-            }, 2000);
-        </script>";
     }
 }
 ?>
@@ -189,6 +183,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if ($message): ?>
                     <div class="mb-6 p-4 rounded-xl <?php echo $messageType === 'success' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'; ?>">
                         <?php echo htmlspecialchars($message); ?>
+                        <?php if ($messageType === 'success' && $whatsapp_url): ?>
+                            <div class="mt-4">
+                                <a href="<?php echo htmlspecialchars($whatsapp_url); ?>" target="_blank" class="inline-flex items-center space-x-2 space-x-reverse bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                    <span>فتح واتساب</span>
+                                </a>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
                 
