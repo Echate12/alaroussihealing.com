@@ -19,7 +19,7 @@ const Contact = () => {
     e.preventDefault();
     setStatus('sending');
     try {
-      const res = await fetch('http://localhost:5000/api/contact', {
+      const res = await fetch('https://alaroussihealingcom-production.up.railway.app/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
