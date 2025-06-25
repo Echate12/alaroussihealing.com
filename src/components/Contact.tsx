@@ -19,10 +19,16 @@ const Contact = () => {
     e.preventDefault();
     setStatus('sending');
     try {
-      const res = await fetch('http://localhost:5000/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+      const res = await fetch("https://alaroussinealingcom-production.up.railway.app/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          type: form.type,
+          message: form.message
+        }),
       });
       if (res.ok) {
         setStatus('success');
