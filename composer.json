@@ -1,0 +1,11 @@
+{
+  "name": "islamic-healing/website",
+  "description": "Islamic healing website with WhatsApp integration",
+  "type": "project",
+  "require": {
+    "php": ">=8.0"
+  },
+  "scripts": {
+    "start": "php -S 0.0.0.0:$PORT"
+  }
+} 
