@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </h3>
                 
                 <?php if ($message): ?>
-                    <div class="mb-6 p-4 rounded-xl <?php echo $messageType === 'success' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'; ?>">
+                    <div id="contact-success" class="mb-6 p-4 rounded-xl <?php echo $messageType === 'success' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'; ?>">
                         <?php echo htmlspecialchars($message); ?>
                         <?php if ($messageType === 'success' && $whatsapp_url): ?>
                             <div class="mt-4">
@@ -195,6 +195,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
+                
+                <script>
+                // Auto-scroll to the success message if it exists
+                window.addEventListener('DOMContentLoaded', function() {
+                  var success = document.getElementById('contact-success');
+                  if (success) {
+                    success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                });
+                </script>
                 
                 <form method="POST" class="space-y-6">
                     <div class="grid md:grid-cols-2 gap-6">
